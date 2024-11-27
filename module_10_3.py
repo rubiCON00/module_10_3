@@ -1,37 +1,31 @@
-import threading
-import random
 import time
-from threading import Thread, Lock
+import threading
+from random import randint
 
 
-
-class Bank(Thread):
-
+class Bank:
     def __init__(self):
-        super().__init__()
+        self.lock = threading.Lock()
         self.balance = 0
-        self.lock = Lock()
-
 
     def deposit(self):
         for i in range(100):
+            randomvalue = randint(50, 500)
+            self.balance += randomvalue
+            print(f'Пополнение: {randomvalue}. Баланс: {self.balance}.')
             if self.balance >= 500 and self.lock.locked():
                 self.lock.release()
-            y = random.randint(50, 500)
-            self.balance += y
-            print(f'Пополнение: {y}. Баланс: {self.balance}')
             time.sleep(0.001)
-
 
     def take(self):
         for i in range(100):
-            x = random.randint(50,500)
-            print(f'Запрос на {x}')
-            if self.balance >= x:
-                self.balance -= x
-                print(f'Снятие: {x}. Баланс: {self.balance}')
+            randomvalue = randint(50, 500)
+            print(f'Запрос на {randomvalue}.')
+            if randomvalue <= self.balance:
+                self.balance -= randomvalue
+                print(f'Снятие: {randomvalue}. Баланс: {self.balance}.')
             else:
-                print(f'Запрос отклонён, недостаточно средств')
+                print('Запрос отклонён, недостаточно средств')
                 self.lock.acquire()
             time.sleep(0.001)
 
